@@ -15,6 +15,13 @@ class Order(db.Model):
     order_number = db.Column(db.String(32), nullable=False, unique=True)
     total_amount = db.Column(db.BigInteger, nullable=False)
     status = db.Column(db.String(32), nullable=False, default="pending")
+    customer_name = db.Column(db.String(255), nullable=False)
+    customer_email = db.Column(db.String(255), nullable=False)
+    customer_phone = db.Column(db.String(50), nullable=False)
+    shipping_address = db.Column(db.String(500), nullable=False)
+    shipping_city = db.Column(db.String(100), nullable=False)
+    shipping_state = db.Column(db.String(100), nullable=False)
+    shipping_country = db.Column(db.String(100), nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc))
     updated_at = db.Column(db.DateTime(timezone=True), nullable=False, default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
 
