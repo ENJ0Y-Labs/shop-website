@@ -6,6 +6,7 @@ load_dotenv()
 
 
 class Config:
+    APP_ENV = os.getenv("APP_ENV", "development").strip().lower()
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-only-change-me")
 
     database_url = os.getenv("DATABASE_URL")
@@ -20,8 +21,14 @@ class Config:
     SESSION_PERMANENT = False
     SESSION_USE_SIGNER = True
     SESSION_COOKIE_HTTPONLY = True
-    SESSION_COOKIE_SAMESITE = os.getenv("SESSION_COOKIE_SAMESITE", "Lax")
-    SESSION_COOKIE_SECURE = os.getenv("SESSION_COOKIE_SECURE", "false").lower() == "true"
+    SESSION_COOKIE_SAMESITE = os.getenv(
+        "SESSION_COOKIE_SAMESITE",
+        "None" if APP_ENV == "production" else "Lax",
+    )
+    SESSION_COOKIE_SECURE = os.getenv(
+        "SESSION_COOKIE_SECURE",
+        "true" if APP_ENV == "production" else "false",
+    ).lower() == "true"
     SESSION_COOKIE_NAME = "enj0y_session"
     SESSION_FILE_DIR = os.getenv(
         "SESSION_FILE_DIR",
