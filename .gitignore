@@ -63,6 +63,8 @@ db.sqlite3-journal
 
 # Flask stuff:
 instance/
+.test_flask_session/
+flask_session/
 .webassets-cache
 
 # Scrapy stuff:
