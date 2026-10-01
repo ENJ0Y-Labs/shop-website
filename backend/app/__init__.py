@@ -1,24 +1,44 @@
 import os
 
 from flask import Flask
+from flask_cors import CORS
+from flask_session import Session
 from sqlalchemy import text
 
 from .config.settings import Config
+from .errors import register_error_handlers
 from .extensions import db, migrate
+from .services.google_oauth import init_google_oauth
 
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    db.init_app(app)
+    os.makedirs(app.config["SESSION_FILE_DIR"], exist_ok=True)
 
-    migrations_dir = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "..", "..", "migrations")
+    db.init_app(app)
+    migrate.init_app(
+        app,
+        db,
+        directory=os.path.abspath(
+            os.path.join(os.path.dirname(__file__), "..", "..", "migrations")
+        ),
     )
-    migrate.init_app(app, db, directory=migrations_dir)
+    Session(app)
+
+    CORS(
+        app,
+        origins=app.config["CORS_ORIGINS"],
+        supports_credentials=True,
+    )
 
     from . import models  # noqa: F401
+    from .routes.auth import auth_bp
+
+    app.register_blueprint(auth_bp)
+    init_google_oauth(app)
+    register_error_handlers(app)
 
     @app.get("/api/health")
     def health_check():
