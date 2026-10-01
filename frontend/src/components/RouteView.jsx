@@ -24,11 +24,12 @@ export function RouteView({ children }) {
 export function ProtectedRoute({ children }) {
   const { loading, isAuthenticated } = useAuth();
 
+  useEffect(() => {
+    if (!loading && !isAuthenticated) navigate("/login");
+  }, [loading, isAuthenticated]);
+
   if (loading) return <PageState message="Checking your account..." />;
-  if (!isAuthenticated) {
-    navigate("/login");
-    return <PageState message="Redirecting to sign in..." />;
-  }
+  if (!isAuthenticated) return <PageState message="Redirecting to sign in..." />;
 
   return children;
 }
