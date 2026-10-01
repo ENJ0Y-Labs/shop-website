@@ -5,7 +5,10 @@ from ..extensions import db
 
 class CartItem(db.Model):
     __tablename__ = "cart_items"
-    __table_args__ = (db.UniqueConstraint("cart_id", "product_id", name="uq_cart_item_product"),)
+    __table_args__ = (
+        db.UniqueConstraint("cart_id", "product_id", name="uq_cart_item_product"),
+        db.CheckConstraint("quantity > 0", name="ck_cart_items_quantity_positive"),
+    )
 
     id = db.Column(db.Uuid, primary_key=True, default=uuid.uuid4)
     cart_id = db.Column(db.Uuid, db.ForeignKey("carts.id", ondelete="CASCADE"), nullable=False, index=True)
