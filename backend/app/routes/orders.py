@@ -16,6 +16,10 @@ def create_order_route():
     data = require_json(request)
 
     order = create_order(user_id, data)
-    db.session.commit()
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        raise
 
     return jsonify({"order": serialize_order(order)}), 201
