@@ -25,7 +25,7 @@ export function ProtectedRoute({ children }) {
   const { loading, isAuthenticated } = useAuth();
 
   useEffect(() => {
-    if (!loading && !isAuthenticated) navigate("/login");
+    if (!loading && !isAuthenticated) navigate(`/login?next=${encodeURIComponent(window.location.pathname)}`);
   }, [loading, isAuthenticated]);
 
   if (loading) return <PageState message="Checking your account..." />;
