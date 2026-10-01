@@ -237,9 +237,11 @@ def test_order_detail_rejects_invalid_or_other_order(client, app, products):
             name="Other",
         )
         db.session.add(other_user)
+        db.session.flush()
+        other_user_id = str(other_user.id)
         db.session.commit()
 
     with client.session_transaction() as active_session:
-        active_session["user_id"] = str(other_user.id)
+        active_session["user_id"] = other_user_id
 
     assert client.get(f"/api/orders/{order_id}").status_code == 404
