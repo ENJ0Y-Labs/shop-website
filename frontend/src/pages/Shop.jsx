@@ -6,7 +6,7 @@ import { useCart } from "../context/CartContext";
 import { productApi } from "../services/productApi";
 
 export default function Shop() {
-  const { addVisitorItem } = useCart();
+  const { addItem } = useCart();
   const [products, setProducts] = useState([]);
   const [pagination, setPagination] = useState(null);
   const [search, setSearch] = useState("");
@@ -65,7 +65,7 @@ export default function Shop() {
         {!loading && !error && products.length === 0 && <EmptyState title="Nothing matched." message="Try a different search." />}
         {!loading && !error && products.length > 0 && (
           <>
-            <div className="product-grid">{products.map((product) => <ProductCard key={product.id} product={product} onAdd={() => addVisitorItem(product.id, 1)} />)}</div>
+            <div className="product-grid">{products.map((product) => <ProductCard key={product.id} product={product} onAdd={() => addItem(product.id, 1)} />)}</div>
             {pagination && <p className="results-count">{pagination.total} product{pagination.total === 1 ? "" : "s"}</p>}
           </>
         )}
