@@ -19,6 +19,8 @@ services:
         sync: false
       - key: SESSION_TYPE
         sync: false
+      - key: REDIS_URL
+        sync: false
       - key: SESSION_COOKIE_SAMESITE
         sync: false
       - key: SESSION_COOKIE_SECURE
