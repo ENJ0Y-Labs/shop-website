@@ -231,4 +231,4 @@ frontend/.env.local
 frontend/.env.*.local
 
 # Flask-Session filesystem data
-/.flask_session/
+.flask_session/
