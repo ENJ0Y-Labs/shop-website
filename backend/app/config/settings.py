@@ -40,3 +40,6 @@ class Config:
         "GOOGLE_REDIRECT_URI",
         "http://localhost:5000/api/auth/google/callback",
     )
+
+    SUPABASE_URL = os.getenv("SUPABASE_URL")
+    SUPABASE_STORAGE_BUCKET = os.getenv("SUPABASE_STORAGE_BUCKET", "product-images")
