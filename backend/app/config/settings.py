@@ -36,13 +36,14 @@ class Config:
     )
 
     FRONTEND_URL = os.getenv("FRONTEND_URL", "").strip().rstrip("/")
-    cors_origins = os.getenv("CORS_ORIGINS", "").strip()
-    if cors_origins:
-        CORS_ORIGINS = [origin.strip().rstrip("/") for origin in cors_origins.split(",") if origin.strip()]
-    elif FRONTEND_URL:
-        CORS_ORIGINS = [FRONTEND_URL]
-    else:
-        CORS_ORIGINS = ["http://localhost:5173"]
+    configured_origins = [
+        origin.strip().rstrip("/")
+        for origin in os.getenv("CORS_ORIGINS", "").split(",")
+        if origin.strip()
+    ]
+    if FRONTEND_URL and FRONTEND_URL not in configured_origins:
+        configured_origins.insert(0, FRONTEND_URL)
+    CORS_ORIGINS = configured_origins or ["http://localhost:5173"]
 
     GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
     GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
