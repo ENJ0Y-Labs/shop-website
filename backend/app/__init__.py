@@ -3,6 +3,7 @@ import os
 from flask import Flask
 from flask_cors import CORS
 from flask_session import Session
+from redis import Redis
 from sqlalchemy import text
 
 from .config.settings import Config
@@ -15,7 +16,13 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    os.makedirs(app.config["SESSION_FILE_DIR"], exist_ok=True)
+    if app.config["SESSION_TYPE"] == "redis":
+        redis_url = app.config.get("REDIS_URL")
+        if not redis_url:
+            raise RuntimeError("REDIS_URL is required when SESSION_TYPE=redis.")
+        app.config["SESSION_REDIS"] = Redis.from_url(redis_url)
+    else:
+        os.makedirs(app.config["SESSION_FILE_DIR"], exist_ok=True)
 
     db.init_app(app)
     migrate.init_app(
