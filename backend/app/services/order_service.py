@@ -66,6 +66,32 @@ def serialize_order(order):
     }
 
 
+def get_user_orders(user_id):
+    return (
+        db.session.query(Order)
+        .filter_by(user_id=user_id)
+        .order_by(Order.created_at.desc())
+        .all()
+    )
+
+
+def get_user_order(user_id, order_id):
+    try:
+        from uuid import UUID
+        order_uuid = UUID(str(order_id))
+    except (ValueError, AttributeError, TypeError):
+        raise APIError("Invalid order ID.", 400, "invalid_order_id")
+
+    order = (
+        db.session.query(Order)
+        .filter(Order.id == order_uuid, Order.user_id == user_id)
+        .first()
+    )
+    if not order:
+        raise APIError("Order not found.", 404, "order_not_found")
+    return order
+
+
 def create_order(user_id, data):
     checkout = _validate_checkout(data)
 

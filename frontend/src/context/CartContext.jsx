@@ -1,115 +1,34 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
-
+import { createContext,useContext,useEffect,useMemo,useState } from "react";
+import { useAuth } from "./AuthContext";
 import { cartApi } from "../services/cartApi";
-import {
-  addToLocalCart,
-  clearLocalCart,
-  getLocalCart,
-  hasLocalCartItems,
-  removeFromLocalCart,
-  updateLocalCartItem,
-} from "../services/cartStorage";
-
-const CartContext = createContext(null);
-
-function localCartView(items) {
-  return {
-    items,
-    item_count: items.reduce((sum, item) => sum + item.quantity, 0),
-    total: null,
-  };
+import { addToLocalCart,clearLocalCart,getLocalCart,hasLocalCartItems,removeFromLocalCart,updateLocalCartItem } from "../services/cartStorage";
+const CartContext=createContext(null);
+function localCartView(items){return{items,item_count:items.reduce((sum,item)=>sum+item.quantity,0),total:null};}
+export function CartProvider({children}){
+ const {user}=useAuth(); const [cart,setCart]=useState(null); const [loading,setLoading]=useState(true);
+ useEffect(()=>{
+  let cancelled=false;
+  async function load(){
+   setLoading(true);
+   if(!user){if(!cancelled)setCart(localCartView(getLocalCart()));setLoading(false);return;}
+   try{
+    const local=getLocalCart(); const response=local.length?await cartApi.merge(local):await cartApi.get();
+    if(local.length)clearLocalCart();
+    if(!cancelled)setCart(response.cart);
+   }catch{if(!cancelled)setCart(null)}finally{if(!cancelled)setLoading(false)}
+  }
+  load(); return()=>{cancelled=true};
+ },[user]);
+ useEffect(()=>{
+  const refresh=async()=>{if(!user)return;try{const r=await cartApi.get();setCart(r.cart)}catch{}};
+  window.addEventListener("cart-refresh",refresh); return()=>window.removeEventListener("cart-refresh",refresh);
+ },[user]);
+ async function addItem(id,q=1){if(user){const response=await cartApi.addItem(id,q);setCart(response.cart);return response.cart;}return addVisitorItem(id,q)}
+ function addVisitorItem(id,q=1){const items=addToLocalCart(id,q);setCart(localCartView(items));return items}
+ function updateVisitorItem(id,q){const items=updateLocalCartItem(id,q);setCart(localCartView(items));return items}
+ function removeVisitorItem(id){const items=removeFromLocalCart(id);setCart(localCartView(items));return items}
+ function clearVisitorCart(){clearLocalCart();setCart(localCartView([]))}
+ const value=useMemo(()=>({cart,loading,authenticated:Boolean(user),hasLocalItems:hasLocalCartItems(),addItem,addVisitorItem,updateVisitorItem,removeVisitorItem,clearVisitorCart}),[cart,loading,user]);
+ return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
-
-export function CartProvider({ children }) {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [cart, setCart] = useState(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function loadCart() {
-      try {
-        const response = await cartApi.get();
-        if (!cancelled) {
-          setAuthenticated(true);
-          setCart(response.cart);
-        }
-      } catch {
-        if (!cancelled) {
-          setAuthenticated(false);
-          setCart(null);
-        }
-      }
-    }
-
-    loadCart();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  async function syncAfterLogin() {
-    const localItems = getLocalCart();
-
-    if (localItems.length) {
-      const response = await cartApi.merge(localItems);
-      clearLocalCart();
-      setCart(response.cart);
-      setAuthenticated(true);
-      return response.cart;
-    }
-
-    const response = await cartApi.get();
-    setCart(response.cart);
-    setAuthenticated(true);
-    return response.cart;
-  }
-
-  function addVisitorItem(productId, quantity = 1) {
-    const items = addToLocalCart(productId, quantity);
-    setCart(localCartView(items));
-    return items;
-  }
-
-  function updateVisitorItem(productId, quantity) {
-    const items = updateLocalCartItem(productId, quantity);
-    setCart(localCartView(items));
-    return items;
-  }
-
-  function removeVisitorItem(productId) {
-    const items = removeFromLocalCart(productId);
-    setCart(localCartView(items));
-    return items;
-  }
-
-  function clearVisitorCart() {
-    clearLocalCart();
-    setCart(localCartView([]));
-  }
-
-  const value = useMemo(
-    () => ({
-      cart,
-      authenticated,
-      hasLocalItems: hasLocalCartItems(),
-      syncAfterLogin,
-      addVisitorItem,
-      updateVisitorItem,
-      removeVisitorItem,
-      clearVisitorCart,
-    }),
-    [cart, authenticated],
-  );
-
-  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
-}
-
-export function useCart() {
-  const context = useContext(CartContext);
-  if (!context) {
-    throw new Error("useCart must be used within a CartProvider");
-  }
-  return context;
-}
+export function useCart(){const context=useContext(CartContext);if(!context)throw new Error("useCart must be used within CartProvider");return context;}
