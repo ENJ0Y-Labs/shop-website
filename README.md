@@ -1,4 +1,4 @@
-# enj0y Solution
+# ENJ0Y Solution
 
 A full-stack shop website built for the **HNG15 Lesson 2 Individual Task**.
 
