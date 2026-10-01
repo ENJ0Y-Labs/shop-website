@@ -88,6 +88,7 @@ def create_order(user_id, data):
         .filter(Product.id.in_(product_ids))
         .order_by(Product.id.asc())
         .with_for_update()
+        .execution_options(populate_existing=True)
         .all()
     )
     products_by_id = {product.id: product for product in products}
