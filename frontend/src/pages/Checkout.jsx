@@ -1,15 +1,15 @@
 import { useEffect,useMemo,useState } from "react";
-import { PageState,navigate } from "../components/RouteView";
+import { EmptyState,PageState,navigate } from "../components/RouteView";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { orderApi } from "../services/orderApi";
 const initialForm={name:"",email:"",phone:"",address:"",city:"",state:"",country:"Nigeria"};
 const money=k=>new Intl.NumberFormat("en-NG",{style:"currency",currency:"NGN"}).format((k??0)/100);
 export default function Checkout(){
- const {user,loading:authLoading,isAuthenticated}=useAuth(); const {cart}=useCart(); const [form,setForm]=useState(initialForm); const [submitting,setSubmitting]=useState(false); const [error,setError]=useState("");
+ const {user,loading:authLoading,isAuthenticated}=useAuth(); const {cart,loading:cartLoading}=useCart(); const [form,setForm]=useState(initialForm); const [submitting,setSubmitting]=useState(false); const [error,setError]=useState("");
  useEffect(()=>{if(user)setForm(c=>({...c,name:user.name??"",email:user.email??""}))},[user]); const total=useMemo(()=>cart?.total??0,[cart]);
  if(authLoading)return <PageState message="Checking your account..."/>; if(!isAuthenticated){navigate("/login?next=/checkout");return <PageState message="Redirecting to sign in..."/>}
- if(!cart?.items?.length)return <div className="page-shell"><section className="container content-narrow"><EmptyState title="Your cart is empty." message="Add something before checking out." action={()=>navigate("/")} actionLabel="Shop products"/></section></div>;
+ if(cartLoading)return <PageState message="Loading your cart..."/>; if(!cart?.items?.length)return <div className="page-shell"><section className="container content-narrow"><EmptyState title="Your cart is empty." message="Add something before checking out." action={()=>navigate("/")} actionLabel="Shop products"/></section></div>;
  function change(e){setForm(c=>({...c,[e.target.name]:e.target.value}))}
  async function submit(e){e.preventDefault();setSubmitting(true);setError("");try{const r=await orderApi.create(form);window.dispatchEvent(new Event("cart-refresh"));navigate(`/order/${r.order.id}`)}catch(x){setError(x.message)}finally{setSubmitting(false)}}
  return <div className="page-shell"><section className="container checkout-layout"><div><span className="eyebrow">Checkout</span><h1>Complete your order</h1><p className="muted">Your final price, stock, and total are verified by the server.</p>{error&&<p className="form-error" role="alert">{error}</p>}
