@@ -1,22 +1,9 @@
-import uuid
-
 from sqlalchemy import cast, func, Integer, select
 
 from ..errors import APIError
 from ..extensions import db
 from ..models import Cart, CartItem, Order, OrderItem, Product
 from ..utils.validation import required_string, validate_email
-
-
-CHECKOUT_FIELDS = (
-    "name",
-    "email",
-    "phone",
-    "address",
-    "city",
-    "state",
-    "country",
-)
 
 
 def _next_order_number():
