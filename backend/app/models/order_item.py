@@ -5,6 +5,11 @@ from ..extensions import db
 
 class OrderItem(db.Model):
     __tablename__ = "order_items"
+    __table_args__ = (
+        db.CheckConstraint("quantity > 0", name="ck_order_items_quantity_positive"),
+        db.CheckConstraint("unit_price >= 0", name="ck_order_items_unit_price_nonnegative"),
+        db.CheckConstraint("subtotal >= 0", name="ck_order_items_subtotal_nonnegative"),
+    )
 
     id = db.Column(db.Uuid, primary_key=True, default=uuid.uuid4)
     order_id = db.Column(db.Uuid, db.ForeignKey("orders.id", ondelete="CASCADE"), nullable=False, index=True)
