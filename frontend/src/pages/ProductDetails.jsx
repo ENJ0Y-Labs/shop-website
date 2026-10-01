@@ -7,7 +7,7 @@ import { productApi } from "../services/productApi";
 const money = (kobo) => new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format((kobo ?? 0) / 100);
 
 export default function ProductDetails({ id }) {
-  const { addVisitorItem } = useCart();
+  const { addItem } = useCart();
   const [product, setProduct] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -23,7 +23,7 @@ export default function ProductDetails({ id }) {
   if (!product) return <PageState message="Product not found." error />;
 
   function add() {
-    addVisitorItem(product.id, quantity);
+    addItem(product.id, quantity);
     navigate("/cart");
   }
 
