@@ -43,3 +43,9 @@ class Config:
 
     SUPABASE_URL = os.getenv("SUPABASE_URL")
     SUPABASE_STORAGE_BUCKET = os.getenv("SUPABASE_STORAGE_BUCKET", "product-images")
+
+    MAILGUN_API_KEY = os.getenv("MAILGUN_API_KEY")
+    MAILGUN_DOMAIN = os.getenv("MAILGUN_DOMAIN")
+    MAILGUN_FROM_EMAIL = os.getenv("MAILGUN_FROM_EMAIL")
+    MAILGUN_API_BASE_URL = os.getenv("MAILGUN_API_BASE_URL", "https://api.mailgun.net").rstrip("/")
+    MAILGUN_TIMEOUT = int(os.getenv("MAILGUN_TIMEOUT", "10"))

@@ -1,31 +1,28 @@
-# Database migrations
+# Migrations
 
-This directory is managed by Flask-Migrate/Alembic.
+Run the migrations from the repository root:
 
-Run migration commands from the repository root with:
-
-```bash
+```powershell
 flask --app backend.run db upgrade
-```
-
-Seed the development products after the migration:
-
-```bash
 python -m backend.seed
 ```
 
-The database URL is read from `DATABASE_URL`. Never commit a real database URL or other credentials.
+For the current checkout schema, migration `0003_checkout_customer_details` adds the customer and shipping information required by the order flow.
 
-The current migration chain includes the checkout customer-information fields in migration `0003_checkout_customer_details`.
+## Phase 7: Mailgun
 
-After pulling the Phase 6 branch, apply it with:
+Mailgun is used only by the Flask backend. Never put Mailgun credentials in frontend environment variables.
 
-```bash
-flask --app backend.run db upgrade
+Required backend environment variables:
+
+```env
+MAILGUN_API_KEY=
+MAILGUN_DOMAIN=
+MAILGUN_FROM_EMAIL=
+MAILGUN_API_BASE_URL=https://api.mailgun.net
+MAILGUN_TIMEOUT=10
 ```
 
-Then run the backend tests:
+For a Mailgun domain created in the EU region, use `https://api.eu.mailgun.net` as the API base URL. Mailgun documents separate US and EU API base URLs. 
 
-```bash
-python -m pytest backend/tests -q
-```
+The order endpoint commits the database transaction before attempting email delivery. If Mailgun fails, the order remains persisted and the failure is logged server-side.
