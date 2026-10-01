@@ -7,11 +7,18 @@ import {
   getLocalCart,
   hasLocalCartItems,
   removeFromLocalCart,
-  setLocalCart,
   updateLocalCartItem,
 } from "../services/cartStorage";
 
 const CartContext = createContext(null);
+
+function localCartView(items) {
+  return {
+    items,
+    item_count: items.reduce((sum, item) => sum + item.quantity, 0),
+    total: null,
+  };
+}
 
 export function CartProvider({ children }) {
   const [authenticated, setAuthenticated] = useState(false);
@@ -61,25 +68,25 @@ export function CartProvider({ children }) {
 
   function addVisitorItem(productId, quantity = 1) {
     const items = addToLocalCart(productId, quantity);
-    setCart({ items, item_count: items.reduce((sum, item) => sum + item.quantity, 0), total: null });
+    setCart(localCartView(items));
     return items;
   }
 
   function updateVisitorItem(productId, quantity) {
     const items = updateLocalCartItem(productId, quantity);
-    setCart({ items, item_count: items.reduce((sum, item) => sum + item.quantity, 0), total: null });
+    setCart(localCartView(items));
     return items;
   }
 
   function removeVisitorItem(productId) {
     const items = removeFromLocalCart(productId);
-    setCart({ items, item_count: items.reduce((sum, item) => sum + item.quantity, 0), total: null });
+    setCart(localCartView(items));
     return items;
   }
 
   function clearVisitorCart() {
     clearLocalCart();
-    setCart({ items: [], item_count: 0, total: 0 });
+    setCart(localCartView([]));
   }
 
   const value = useMemo(
@@ -92,7 +99,6 @@ export function CartProvider({ children }) {
       updateVisitorItem,
       removeVisitorItem,
       clearVisitorCart,
-      setLocalCart,
     }),
     [cart, authenticated],
   );
