@@ -35,6 +35,8 @@ class Config:
         os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".flask_session"),
     )
 
+    FRONTEND_URL = os.getenv("FRONTEND_URL", "").strip().rstrip("/")
+
     CORS_ORIGINS = [
         origin.strip()
         for origin in os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")
