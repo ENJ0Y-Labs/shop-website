@@ -71,5 +71,7 @@ def google_login():
 @auth_bp.get("/google/callback")
 def google_callback():
     handle_google_callback(session)
-    frontend_url = current_app.config["CORS_ORIGINS"][0]
+    frontend_url = current_app.config.get("FRONTEND_URL")
+    if not frontend_url:
+        raise APIError("Frontend URL is not configured.", 500, "frontend_url_not_configured")
     return redirect(f"{frontend_url}/?auth=success")
