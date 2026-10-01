@@ -189,7 +189,7 @@ def test_user_cannot_modify_another_users_item(client, app, products):
 
 def test_merge_adds_to_existing_cart(client, products):
     login(client)
-    shirt, bag, _ = products
+    bag, shirt, _ = products
 
     client.post(
         "/api/cart/items",
@@ -217,7 +217,7 @@ def test_merge_adds_to_existing_cart(client, products):
 
 def test_merge_is_atomic_when_stock_is_exceeded(client, products):
     login(client)
-    shirt, bag, _ = products
+    bag, shirt, _ = products
 
     response = client.post(
         "/api/cart/merge",
