@@ -1,4 +1,4 @@
-import { apiRequest } from "./api";
+import { apiRequest, API_BASE_URL } from "./api";
 
 export const authApi = {
   me: () => apiRequest("/auth/me"),
@@ -11,8 +11,5 @@ export const authApi = {
     body: JSON.stringify(data),
   }),
   logout: () => apiRequest("/auth/logout", { method: "POST" }),
-  googleLoginUrl: () => {
-    const base = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:5000/api";
-    return `${base}/auth/google`;
-  },
+  googleLoginUrl: () => `${API_BASE_URL}/auth/google`,
 };
