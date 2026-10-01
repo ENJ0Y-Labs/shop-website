@@ -203,3 +203,43 @@ def test_checkout_validates_required_customer_fields(client, products):
 
     assert response.status_code == 400
     assert response.json["error"]["code"] == "validation_error"
+
+
+def test_order_history_returns_only_authenticated_users_orders(client, app, products):
+    login(client)
+    add_to_cart(client, products[1].id, 1)
+
+    response = client.post("/api/orders", json=checkout_payload())
+    assert response.status_code == 201
+    order_id = response.json["order"]["id"]
+
+    history = client.get("/api/orders")
+    assert history.status_code == 200
+    assert [order["id"] for order in history.json["orders"]] == [order_id]
+
+    detail = client.get(f"/api/orders/{order_id}")
+    assert detail.status_code == 200
+    assert detail.json["order"]["id"] == order_id
+
+
+def test_order_detail_rejects_invalid_or_other_order(client, app, products):
+    login(client)
+    add_to_cart(client, products[1].id, 1)
+    response = client.post("/api/orders", json=checkout_payload())
+    order_id = response.json["order"]["id"]
+
+    assert client.get("/api/orders/not-a-uuid").status_code == 400
+
+    with app.app_context():
+        other_user = User(
+            email="other@example.com",
+            password_hash=generate_password_hash("password123"),
+            name="Other",
+        )
+        db.session.add(other_user)
+        db.session.commit()
+
+    with client.session_transaction() as active_session:
+        active_session["user_id"] = str(other_user.id)
+
+    assert client.get(f"/api/orders/{order_id}").status_code == 404
