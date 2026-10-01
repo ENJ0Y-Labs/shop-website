@@ -1,6 +1,6 @@
-from app import create_app
-from app.extensions import db
-from app.models import Product
+from backend.app import create_app
+from backend.app.extensions import db
+from backend.app.models import Product
 
 PRODUCTS = [
     {"name": "Classic Cotton T-Shirt", "description": "Everyday cotton t-shirt with a clean, comfortable fit.", "price": 1250000, "category": "Clothing", "stock": 25, "image_url": None},
