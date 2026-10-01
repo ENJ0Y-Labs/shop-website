@@ -1,6 +1,7 @@
-from flask import Blueprint, current_app, jsonify, redirect, request, session, url_for
+from flask import Blueprint, current_app, jsonify, redirect, request, session
 
 from ..errors import APIError
+from ..extensions import db
 from ..models import User
 from ..services.auth_service import authenticate_user, create_email_user, serialize_user, sign_in, sign_out
 from ..services.google_oauth import get_google_client, handle_google_callback
@@ -44,8 +45,8 @@ def me():
     if not user_id:
         raise APIError("Authentication required.", 401, "unauthenticated")
 
-    user = db_user = User.query.filter_by(id=user_id).first()
-    if not db_user:
+    user = User.query.filter_by(id=user_id).first()
+    if not user:
         sign_out(session)
         raise APIError("Authentication required.", 401, "unauthenticated")
 
@@ -61,6 +62,6 @@ def google_login():
 
 @auth_bp.get("/google/callback")
 def google_callback():
-    user = handle_google_callback(session)
+    handle_google_callback(session)
     frontend_url = current_app.config["CORS_ORIGINS"][0]
     return redirect(f"{frontend_url}/?auth=success")
