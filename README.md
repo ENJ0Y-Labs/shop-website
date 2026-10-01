@@ -1,4 +1,4 @@
-# ENJ0Y 
+# ENJ0Y solution
 
 A full-stack shop website built for the **HNG15 Lesson 2 Individual Task**.
 
@@ -8,7 +8,7 @@ A full-stack shop website built for the **HNG15 Lesson 2 Individual Task**.
 
 ## Project Goal
 
-enj0y Solution is a responsive e-commerce website where visitors can browse products, search and filter the catalogue, manage a shopping cart, authenticate with email/password or Google, and place orders through a checkout flow.
+ENJ0Y Solution is a responsive e-commerce website where visitors can browse products, search and filter the catalogue, manage a shopping cart, authenticate with email/password or Google, and place orders through a checkout flow.
 
 The project is being developed beyond the HNG15 task as a foundation for a more complete shop application.
 
@@ -321,4 +321,4 @@ The repository currently contains the initial project files. Application develop
 
 ---
 
-Built for HNG15 Lesson 2 by **enj0y Solution**.
+Built for HNG15 Lesson 2 by **ENJ0Y Solution**.
