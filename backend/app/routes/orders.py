@@ -3,6 +3,7 @@ from flask import Blueprint, jsonify, request, session
 from ..errors import APIError
 from ..extensions import db
 from ..services.cart_service import get_authenticated_user_id
+from ..services.mail_service import send_order_confirmation
 from ..services.order_service import create_order, serialize_order
 from ..utils.validation import require_json
 
@@ -22,4 +23,5 @@ def create_order_route():
         db.session.rollback()
         raise
 
+    send_order_confirmation(order)
     return jsonify({"order": serialize_order(order)}), 201
