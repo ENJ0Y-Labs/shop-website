@@ -1,3 +1,5 @@
+import uuid
+
 from flask import Blueprint, current_app, jsonify, redirect, request, session
 
 from ..errors import APIError
@@ -45,7 +47,13 @@ def me():
     if not user_id:
         raise APIError("Authentication required.", 401, "unauthenticated")
 
-    user = User.query.filter_by(id=user_id).first()
+    try:
+        user_uuid = uuid.UUID(str(user_id))
+    except (ValueError, AttributeError, TypeError):
+        sign_out(session)
+        raise APIError("Authentication required.", 401, "unauthenticated")
+
+    user = User.query.filter_by(id=user_uuid).first()
     if not user:
         sign_out(session)
         raise APIError("Authentication required.", 401, "unauthenticated")
