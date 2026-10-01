@@ -1,4 +1,4 @@
-# enJOY Solution
+# enj0y Solution
 
 A full-stack shop website built for the **HNG15 Lesson 2 Individual Task**.
 
@@ -8,7 +8,7 @@ A full-stack shop website built for the **HNG15 Lesson 2 Individual Task**.
 
 ## Project Goal
 
-enJOY Solution is a responsive e-commerce website where visitors can browse products, search and filter the catalogue, manage a shopping cart, authenticate with email/password or Google, and place orders through a checkout flow.
+enj0y Solution is a responsive e-commerce website where visitors can browse products, search and filter the catalogue, manage a shopping cart, authenticate with email/password or Google, and place orders through a checkout flow.
 
 The project is being developed beyond the HNG15 task as a foundation for a more complete shop application.
 
@@ -194,7 +194,7 @@ python -m venv .venv
 Windows:
 
 ```powershell
-.venv\Scripts\activate
+.venv\\Scripts\\activate
 pip install -r requirements.txt
 ```
 
@@ -321,4 +321,4 @@ The repository currently contains the initial project files. Application develop
 
 ---
 
-Built for HNG15 Lesson 2 by **enJOY Solution**.
+Built for HNG15 Lesson 2 by **enj0y Solution**.
