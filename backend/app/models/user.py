@@ -8,7 +8,7 @@ class User(db.Model):
     __tablename__ = "users"
 
     id = db.Column(db.Uuid, primary_key=True, default=uuid.uuid4)
-    email = db.Column(db.String(255), nullable=False, unique=True, index=True)
+    email = db.Column(db.String(255), nullable=False, unique=True)
     password_hash = db.Column(db.String(255), nullable=True)
     name = db.Column(db.String(255), nullable=False)
     google_id = db.Column(db.String(255), nullable=True, unique=True)
