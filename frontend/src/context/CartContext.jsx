@@ -23,11 +23,12 @@ export function CartProvider({children}){
   const refresh=async()=>{if(!user)return;try{const r=await cartApi.get();setCart(r.cart)}catch{}};
   window.addEventListener("cart-refresh",refresh); return()=>window.removeEventListener("cart-refresh",refresh);
  },[user]);
+ async function addItem(id,q=1){if(user){const response=await cartApi.addItem(id,q);setCart(response.cart);return response.cart;}return addVisitorItem(id,q)}
  function addVisitorItem(id,q=1){const items=addToLocalCart(id,q);setCart(localCartView(items));return items}
  function updateVisitorItem(id,q){const items=updateLocalCartItem(id,q);setCart(localCartView(items));return items}
  function removeVisitorItem(id){const items=removeFromLocalCart(id);setCart(localCartView(items));return items}
  function clearVisitorCart(){clearLocalCart();setCart(localCartView([]))}
- const value=useMemo(()=>({cart,loading,authenticated:Boolean(user),hasLocalItems:hasLocalCartItems(),addVisitorItem,updateVisitorItem,removeVisitorItem,clearVisitorCart}),[cart,loading,user]);
+ const value=useMemo(()=>({cart,loading,authenticated:Boolean(user),hasLocalItems:hasLocalCartItems(),addItem,addVisitorItem,updateVisitorItem,removeVisitorItem,clearVisitorCart}),[cart,loading,user]);
  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }
 export function useCart(){const context=useContext(CartContext);if(!context)throw new Error("useCart must be used within CartProvider");return context;}
