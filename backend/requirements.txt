@@ -1,6 +1,8 @@
 Flask
 Flask-SQLAlchemy
 Flask-Migrate
+Flask-Session
+Authlib
 flask-cors
 python-dotenv
 psycopg[binary]
