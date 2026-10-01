@@ -17,7 +17,10 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {"pool_pre_ping": True}
 
-    SESSION_TYPE = os.getenv("SESSION_TYPE", "filesystem")
+    SESSION_TYPE = os.getenv(
+        "SESSION_TYPE",
+        "redis" if APP_ENV == "production" else "filesystem",
+    ).strip().lower()
     SESSION_PERMANENT = False
     SESSION_USE_SIGNER = True
     SESSION_COOKIE_HTTPONLY = True
@@ -30,6 +33,8 @@ class Config:
         "true" if APP_ENV == "production" else "false",
     ).lower() == "true"
     SESSION_COOKIE_NAME = "enj0y_session"
+
+    REDIS_URL = os.getenv("REDIS_URL", "").strip()
     SESSION_FILE_DIR = os.getenv(
         "SESSION_FILE_DIR",
         os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), ".flask_session"),
