@@ -33,8 +33,6 @@ def upgrade() -> None:
         sa.UniqueConstraint("email", name="uq_users_email"),
         sa.UniqueConstraint("google_id", name="uq_users_google_id"),
     )
-    op.create_index("ix_users_email", "users", ["email"], unique=False)
-
     op.create_table(
         "products",
         sa.Column("id", uuid_type, primary_key=True, nullable=False),
@@ -60,8 +58,6 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
         sa.UniqueConstraint("user_id", name="uq_carts_user_id"),
     )
-    op.create_index("ix_carts_user_id", "carts", ["user_id"], unique=False)
-
     op.create_table(
         "orders",
         sa.Column("id", uuid_type, primary_key=True, nullable=False),
@@ -76,8 +72,6 @@ def upgrade() -> None:
         sa.CheckConstraint("total_amount >= 0", name="ck_orders_total_nonnegative"),
     )
     op.create_index("ix_orders_user_id", "orders", ["user_id"], unique=False)
-    op.create_index("ix_orders_order_number", "orders", ["order_number"], unique=False)
-
     op.create_table(
         "cart_items",
         sa.Column("id", uuid_type, primary_key=True, nullable=False),
@@ -120,15 +114,12 @@ def downgrade() -> None:
     op.drop_index("ix_cart_items_cart_id", table_name="cart_items")
     op.drop_table("cart_items")
 
-    op.drop_index("ix_orders_order_number", table_name="orders")
     op.drop_index("ix_orders_user_id", table_name="orders")
     op.drop_table("orders")
 
-    op.drop_index("ix_carts_user_id", table_name="carts")
     op.drop_table("carts")
 
     op.drop_index("ix_products_category", table_name="products")
     op.drop_table("products")
 
-    op.drop_index("ix_users_email", table_name="users")
     op.drop_table("users")
