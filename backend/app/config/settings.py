@@ -26,7 +26,7 @@ class Config:
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = os.getenv(
         "SESSION_COOKIE_SAMESITE",
-        "None" if APP_ENV == "production" else "Lax",
+        "Lax",
     )
     SESSION_COOKIE_SECURE = os.getenv(
         "SESSION_COOKIE_SECURE",
